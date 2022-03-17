@@ -7,7 +7,7 @@ function App() {
   const { authenticate, isAuthenticated, user } = useMoralis();
 
   // if (!isAuthenticated) {
-  if (isAuthenticated) {
+  if (!isAuthenticated) {
     return (
       <div>
         <button onClick={() => authenticate()}>Authenticate</button>
