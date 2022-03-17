@@ -1,26 +1,24 @@
+import { useMoralis } from "react-moralis";
 import "./App.css";
-import backgroundImg from "./assets/images/background.jpg";
 import { Header } from "./components/Header";
+import { InputComponent } from "./components/InputComponent";
 
 function App() {
+  const { authenticate, isAuthenticated, user } = useMoralis();
+
+  // if (!isAuthenticated) {
+  if (!isAuthenticated) {
+    return (
+      <div>
+        <button onClick={() => authenticate()}>Authenticate</button>
+      </div>
+    );
+  }
   return (
-    <div className="App">
+    <div className="App bg-main-background min-h-screen bg-cover">
       <Header />
-      <img className="w-screen h-screen" src={backgroundImg} alt="background" />
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p className="p-5">
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link text-2xl font-bold underline"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
+      <InputComponent />
+      {/* <h1>Welcome {user.get("username")}</h1> */}
     </div>
   );
 }
