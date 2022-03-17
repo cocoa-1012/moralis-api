@@ -1,7 +1,23 @@
+import { useMoralis } from "react-moralis";
 import "./App.css";
+import { Header } from "./components/Header";
 
 function App() {
-  return <div className="App bg-main-background min-h-screen bg-cover"></div>;
+  const { authenticate, isAuthenticated, user } = useMoralis();
+
+  if (!isAuthenticated) {
+    return (
+      <div>
+        <button onClick={() => authenticate()}>Authenticate</button>
+      </div>
+    );
+  }
+  return (
+    <div className="App bg-main-background min-h-screen bg-cover">
+      <Header />
+      <h1>Welcome {user.get("username")}</h1>
+    </div>
+  );
 }
 
 export default App;
