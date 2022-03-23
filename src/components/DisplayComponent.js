@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useMoralisWeb3Api } from "react-moralis";
 
 export const DisplayComponent = () => {
+  const [collectionAddress, setCollectionAddress] = useState(
+    "0x608c2feb6b80993b26ffb6fa84f454ad3ac38bf0"
+  );
   const [totalNFTTrades, setTotalNFTTrdes] = useState();
   const [lowestValues, setLowestValues] = useState();
   const [traitNFTs, setTraitNFTs] = useState();
@@ -21,7 +24,7 @@ export const DisplayComponent = () => {
   // Get nft prices
   const fetchNFTTrades = async () => {
     const options = {
-      address: "0x608c2feb6b80993b26ffb6fa84f454ad3ac38bf0",
+      address: collectionAddress,
       limit: "10000",
       chain: "eth",
     };
@@ -36,7 +39,7 @@ export const DisplayComponent = () => {
   const fetchAllTokenIds = async () => {
     let trait_list = [];
     const options = {
-      address: "0x608c2feb6b80993b26ffb6fa84f454ad3ac38bf0",
+      address: collectionAddress,
       chain: "eth",
     };
     const NFTs = await Web3Api.token.getAllTokenIds(options);
@@ -112,6 +115,15 @@ export const DisplayComponent = () => {
   return (
     <>
       <div className="flex justify-center w-full items-center py-0">
+        <p className="text-white text-2xl font-semibold w-[300px]">
+          Input Collection: &nbsp;
+        </p>
+        <input
+          type="text"
+          className="px-2 outline-none rounded w-[400px] mr-2"
+          onChange={(e) => setCollectionAddress(e.target.value)}
+          value={collectionAddress}
+        />
         <button
           className="bg-red-400 px-4 py-2 rounded mx-6 hover:bg-red-600 hover:text-white"
           onClick={fetchStart}
