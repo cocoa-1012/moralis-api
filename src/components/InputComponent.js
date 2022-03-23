@@ -29,7 +29,7 @@ export const InputComponent = () => {
       </div>
       <div className="flex justify-center w-full items-center py-4">
         <p className="text-white text-2xl font-semibold w-[300px]">
-          Input Collestion: &nbsp;
+          Input Collection: &nbsp;
         </p>
         <input
           type="text"

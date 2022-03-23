@@ -2,7 +2,7 @@ import { useMoralis } from "react-moralis";
 import "./App.css";
 import { DisplayComponent } from "./components/DisplayComponent";
 import { Header } from "./components/Header";
-import { InputComponent } from "./components/InputComponent";
+// import { InputComponent } from "./components/InputComponent";
 
 function App() {
   const {
@@ -25,13 +25,14 @@ function App() {
     );
   }
   return (
-    <div className="App bg-main-background min-h-screen bg-cover">
-      <Header />
-
-      {/* <h1>Welcome {user.get("username")}</h1> */}
-      <InputComponent />
-      <DisplayComponent />
-      {/* <h1>Welcome {user.get("username")}</h1> */}
+    <div className="App bg-main-background bg-contain bg-opacity-100 min-h-screen bg-cover">
+      <div className="bg-blue-600 min-h-screen bg-opacity-75">
+        <Header />
+        {/* <h1>Welcome {user.get("username")}</h1> */}
+        {/* <InputComponent /> */}
+        <DisplayComponent />
+        {/* <h1>Welcome {user.get("username")}</h1> */}
+      </div>
     </div>
   );
 }
