@@ -17,6 +17,9 @@ export const DisplayComponent = () => {
 
   const Web3Api = useMoralisWeb3Api();
 
+  const setDefault = () => {
+    setCollectionAddress("0x608c2feb6b80993b26ffb6fa84f454ad3ac38bf0");
+  };
   // Calculate size with price
   const compare = (a, b) => {
     return a.price < b.price ? 1 : a.price > b.price ? -1 : 0;
@@ -124,6 +127,12 @@ export const DisplayComponent = () => {
           onChange={(e) => setCollectionAddress(e.target.value)}
           value={collectionAddress}
         />
+        <button
+          className="bg-red-400 px-4 py-2 rounded mx-6 hover:bg-red-600 hover:text-white"
+          onClick={() => setDefault()}
+        >
+          Default Address
+        </button>
         <button
           className="bg-red-400 px-4 py-2 rounded mx-6 hover:bg-red-600 hover:text-white"
           onClick={fetchStart}
