@@ -17,13 +17,13 @@ function App() {
   } = useMoralis();
 
   // if (!isAuthenticated) {
-  if (isAuthenticated) {
-    return (
-      <div>
-        <button onClick={() => authenticate()}>Authenticate</button>
-      </div>
-    );
-  }
+  // if (isAuthenticated) {
+  //   return (
+  //     <div>
+  //       <button onClick={() => authenticate()}>Authenticate</button>
+  //     </div>
+  //   );
+  // }
   return (
     <div className="App bg-main-background bg-contain bg-opacity-100 min-h-screen bg-cover">
       <div className="bg-blue-600 min-h-screen bg-opacity-75">

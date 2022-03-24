@@ -1,5 +1,10 @@
+import Moralis from "moralis/dist/moralis.min.js";
 import React, { useEffect, useState } from "react";
 import { useMoralisWeb3Api } from "react-moralis";
+
+// const appId = (“xxxx”);
+// const serverUrl = “https://xxx”;
+// Moralis.start({ serverUrl , appId })
 
 export const DisplayComponent = () => {
   const [collectionAddress, setCollectionAddress] = useState(
@@ -15,8 +20,20 @@ export const DisplayComponent = () => {
   const [selectedTraitType, setSelectedTraitType] = useState("Select");
   const [selectedTrait, setSelectedTrait] = useState("Select");
 
-  const Web3Api = useMoralisWeb3Api();
+  const serverUrl = "https://oop2hhtnogj0.usemoralis.com:2053/server";
+  const appId = "RUKN49vcmeNc0vHrSNyl5Z3MWvY0ILvd2uiBOxeE";
+  Moralis.start({ serverUrl, appId });
 
+  async function initializeApp() {
+    let currentUser = Moralis.User.current();
+    if (!currentUser) {
+      currentUser = await Moralis.Web3.authenticate();
+    }
+    console.log("Current user moralis", currentUser);
+    const userEthNFT = await Moralis.Web3.getNFTs();
+    console.log("userEthNFT==? ", userEthNFT);
+  }
+  const Web3Api = useMoralisWeb3Api();
   const setDefault = () => {
     setCollectionAddress("0x608c2feb6b80993b26ffb6fa84f454ad3ac38bf0");
   };
@@ -33,11 +50,17 @@ export const DisplayComponent = () => {
     };
     const NFTTrades = await Web3Api.token.getNFTTrades(options);
     setTotalNFTTrdes(NFTTrades);
-    console.log("NFTTraids", NFTTrades);
+    // console.log("NFTTraids", NFTTrades);
     const newArray = NFTTrades.result.sort(compare);
     setLowestValues(newArray.slice(-2));
   };
+  //Get Matadata directly
+  const fetchMetaDataDirectly = async () => {
+    initializeApp();
 
+    const userEthNFT = await Moralis.Web3.getNFTs();
+    console.log("userEthNFT==? ", userEthNFT);
+  };
   // Get Trait List
   const fetchAllTokenIds = async () => {
     let trait_list = [];
@@ -107,13 +130,15 @@ export const DisplayComponent = () => {
   const fetchStart = () => {
     fetchNFTTrades();
     fetchAllTokenIds();
-    console.log("This is starting button ===>");
+    initializeApp();
+    // fetchMetaDataDirectly();
+    // console.log("This is starting button ===>");
   };
 
   useEffect(() => {
     totalNFTTrades && fetchTypesofTrait();
     selectedTrait && fetchLowestByTrait();
-    console.log("Selected option", selectedTraitType);
+    // console.log("Selected option", selectedTraitType);
   }, [selectedTraitType, selectedTrait]);
   return (
     <>
@@ -226,6 +251,24 @@ export const DisplayComponent = () => {
       </div>
       <div className="text-white text-3xl font-semibold ">
         - Getting metadata from the ethereum blockchainby trait ranking
+      </div>
+      <div className="text-white text-xl font-semibold flex px-[10%]">
+        <table className="w-screen bg-green-300">
+          <tr className="text-black">
+            <th>ID</th>
+            <th>Explore</th>
+            <th>Score</th>
+            <th>Rank</th>
+            <th>Price</th>
+          </tr>
+          <tr className="text-gray-700">
+            <td>id</td>
+            <td>explore</td>
+            <td>score</td>
+            <td>rank</td>
+            <td>price</td>
+          </tr>
+        </table>
       </div>
     </>
   );
