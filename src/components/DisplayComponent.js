@@ -29,9 +29,16 @@ export const DisplayComponent = () => {
     if (!currentUser) {
       currentUser = await Moralis.Web3.authenticate();
     }
-    console.log("Current user moralis", currentUser);
-    const userEthNFT = await Moralis.Web3.getNFTs();
-    console.log("userEthNFT==? ", userEthNFT);
+    // console.log("Current user moralis", currentUser);
+    // const userEthNFT = await Moralis.Web3.getNFTs();
+    // console.log("userEthNFT==? ", userEthNFT);
+    //Get metadata for one token. Ex: USDT token on ETH
+    const options = {
+      chain: "eth",
+      addresses: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    };
+    const tokenMetadata = await Web3Api.token.getTokenMetadata(options);
+    console.log("Dan-tokenMetadata==>", tokenMetadata);
   }
   const Web3Api = useMoralisWeb3Api();
   const setDefault = () => {
@@ -41,6 +48,7 @@ export const DisplayComponent = () => {
   const compare = (a, b) => {
     return a.price < b.price ? 1 : a.price > b.price ? -1 : 0;
   };
+
   // Get nft prices
   const fetchNFTTrades = async () => {
     const options = {
