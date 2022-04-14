@@ -19,7 +19,7 @@ export const DisplayComponent = () => {
   const [selectedTrait, setSelectedTrait] = useState("Select");
   const [traitSortData, setTraitSortData] = useState([]);
   const [traitRankData, setTraitRankData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
 
   const serverUrl = "https://oop2hhtnogj0.usemoralis.com:2053/server";
   const appId = "RUKN49vcmeNc0vHrSNyl5Z3MWvY0ILvd2uiBOxeE";
@@ -44,21 +44,71 @@ export const DisplayComponent = () => {
   };
 
   // Calculate size with price
-  const compare = (a, b) => {
-    return a.price < b.price ? 1 : a.price > b.price ? -1 : 0;
-  };
+  const compare = (a, b) => (Number(a.price) < Number(b.price) ? 1 : -1);
   // Get nft prices
+  const parseSnapShot1 = (result, array) => {
+    array.map((element) => {
+      if (Number(element.price) > 0) {
+        const price = element.price;
+        const token_Id = element.token_ids;
+        const block_time = element.block_timestamp;
+        token_Id.map((option) => {
+          const index = result.findIndex((e) => Number(e.id) == Number(option));
+          if (index == -1) {
+            result.push({ id: option, price: price, time: block_time });
+          } else if (
+            new Date(result[index].time).getTime() <
+            new Date(block_time).getTime()
+          ) {
+            result[index] = {
+              ...result[index],
+              price: price,
+              time: block_time,
+            };
+            console.log("AAA => ", result[index], index, block_time);
+          }
+        });
+      }
+    });
+  };
   const fetchNFTTrades = async () => {
+    let result = [];
     const options = {
       address: collectionAddress,
       limit: "10000",
       chain: "eth",
     };
-    const NFTTrades = await Web3Api.token.getNFTTrades(options);
-    setTotalNFTTrdes(NFTTrades);
-    // console.log("NFTTraids", NFTTrades);
-    const newArray = NFTTrades.result.sort(compare);
-    setLowestValues(newArray.slice(-2));
+
+    let snapShot = await Web3Api.token.getNFTTrades(options);
+    setTotalNFTTrdes(snapShot);
+
+    parseSnapShot1(result, snapShot.result);
+    const total = snapShot.total;
+    console.log("total: ", total);
+
+    for (let i = 500; i < total; i += 500) {
+      snapShot = await Web3Api.token.getNFTTrades({
+        ...options,
+        offset: i,
+      });
+      console.log("SnapShot.result =>", snapShot.result);
+      parseSnapShot1(result, snapShot.result);
+    }
+    console.log("New Result", result, total);
+    // const NFTTrades = await Web3Api.token.getNFTTrades(options);
+    // console.log("NFTTraids", NFTTrades.result, typeof NFTTrades.result);
+    const updatedArray = result.sort(compare);
+    console.log(
+      "UpdatedArray",
+      updatedArray,
+      updatedArray.length,
+      updatedArray.filter((item) => item.id == 818),
+      updatedArray.findIndex((item) => item.id == 818)
+    );
+    setLowestValues(updatedArray.slice(-2));
+
+    // const newArray = NFTTrades.result.sort(compare);
+    // setLowestValues(newArray.slice(-2));
   };
 
   // Get Trait List
@@ -133,6 +183,7 @@ export const DisplayComponent = () => {
   const traitCompare = (a, b) => (a.val > b.val ? -1 : 1);
 
   const parseSnapShot = (result, array) => {
+    // console.log("OriginParse=>", result, array);
     array.map((element) => {
       if (element.metadata) {
         const json = JSON.parse(element.metadata);
@@ -180,7 +231,7 @@ export const DisplayComponent = () => {
     console.log(result);
     console.log(Object.keys(result));
     setTraitSortData(result);
-    setIsLoading(false);
+    // setIsLoading(false);
   };
 
   const handleSortedTrait = (e) => {
@@ -227,14 +278,14 @@ export const DisplayComponent = () => {
         - Floor price of last two least values on Opensea
       </div>
       {lowestValues && (
-        <div className="lowest_group flex justify-center p-4">
+        <div className="lowest_group flex justify-center p-4 wrap">
           {lowestValues.map((item) => (
             <div
               className="lowest_item text-black mx-12 bg-red-300 p-4 rounded"
-              key={item.token_ids[0]}
+              key={item.id}
             >
-              <p>Token ID: {item.token_ids[0]}</p>
-              <p>Price: {item.price}</p>
+              <p>Token ID: {item.id}</p>
+              <p>Price (ETH): {item.price / 10 ** 18}</p>
             </div>
           ))}
         </div>
@@ -288,7 +339,9 @@ export const DisplayComponent = () => {
                 key={item.token_ids[0]}
               >
                 <p>Token ID: {item.token_ids[0]}</p>
-                <p>Price: {item.price}</p>
+                <p>Price (ETH): {item.price / 10 ** 18}</p>
+                {/* <p>Token ID: {item.id}</p>
+              <p>Price (ETH): {item.price / 10 ** 18}</p> */}
               </div>
             ))}
           </div>
