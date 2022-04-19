@@ -20,6 +20,7 @@ export const DisplayComponent = () => {
   const [selectedTrait, setSelectedTrait] = useState("Select");
   const [traitSortData, setTraitSortData] = useState([]);
   const [traitRankData, setTraitRankData] = useState([]);
+  const [totalScore, setTotalScore] = useState(1);
   const [isLoading1, setIsLoading1] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
   const [isLoading3, setIsLoading3] = useState(false);
@@ -239,8 +240,13 @@ export const DisplayComponent = () => {
   };
 
   const handleSortedTrait = (e) => {
+    let temp = 1;
     setSelectedTraitTypeForSort(e);
     setTraitRankData(traitSortData[e]);
+    traitSortData[e].map((item) => {
+      temp = temp + item.val;
+    });
+    setTotalScore(temp);
     console.log("SetTraitRandData", e, traitSortData[e]);
   };
 
@@ -396,6 +402,7 @@ export const DisplayComponent = () => {
                 <tbody>
                   <tr className="text-black">
                     <th>Trait</th>
+                    <th>Rarity</th>
                     <th>Score</th>
                     <th>Rank</th>
                     <th>Price</th>
@@ -403,6 +410,7 @@ export const DisplayComponent = () => {
                   {traitRankData.map((item, i) => (
                     <tr className="text-gray-700">
                       <td>{item.key}</td>
+                      <td>{(100 * item.val) / totalScore}</td>
                       <td>{item.val}</td>
                       <td>{i + 1}</td>
                       <td>price</td>
