@@ -1,6 +1,7 @@
 import Moralis from "moralis/dist/moralis.min.js";
 import React, { useEffect, useState } from "react";
 import { useMoralisWeb3Api } from "react-moralis";
+import { Loadercomponent } from "./Loadercomponent";
 
 export const DisplayComponent = () => {
   const [collectionAddress, setCollectionAddress] = useState(
@@ -19,7 +20,9 @@ export const DisplayComponent = () => {
   const [selectedTrait, setSelectedTrait] = useState("Select");
   const [traitSortData, setTraitSortData] = useState([]);
   const [traitRankData, setTraitRankData] = useState([]);
-  // const [isLoading, setIsLoading] = useState(true);
+  const [isLoading1, setIsLoading1] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
+  const [isLoading3, setIsLoading3] = useState(false);
 
   const serverUrl = "https://oop2hhtnogj0.usemoralis.com:2053/server";
   const appId = "RUKN49vcmeNc0vHrSNyl5Z3MWvY0ILvd2uiBOxeE";
@@ -52,6 +55,7 @@ export const DisplayComponent = () => {
         const price = element.price;
         const token_Id = element.token_ids;
         const block_time = element.block_timestamp;
+        token_Id === 818 ? console.log("818=>", element) : console.log();
         token_Id.map((option) => {
           const index = result.findIndex((e) => Number(e.id) == Number(option));
           if (index == -1) {
@@ -95,20 +99,16 @@ export const DisplayComponent = () => {
       parseSnapShot1(result, snapShot.result);
     }
     console.log("New Result", result, total);
-    // const NFTTrades = await Web3Api.token.getNFTTrades(options);
-    // console.log("NFTTraids", NFTTrades.result, typeof NFTTrades.result);
     const updatedArray = result.sort(compare);
     console.log(
       "UpdatedArray",
       updatedArray,
       updatedArray.length,
-      updatedArray.filter((item) => item.id == 818),
+      updatedArray.filter((item) => item.id == 2412),
       updatedArray.findIndex((item) => item.id == 818)
     );
     setLowestValues(updatedArray.slice(-2));
-
-    // const newArray = NFTTrades.result.sort(compare);
-    // setLowestValues(newArray.slice(-2));
+    setIsLoading1(false);
   };
 
   // Get Trait List
@@ -130,6 +130,7 @@ export const DisplayComponent = () => {
       });
 
     setTraitTypes(trait_list);
+    setIsLoading2(false);
   };
 
   // Get Types of Trait
@@ -173,6 +174,9 @@ export const DisplayComponent = () => {
 
   //Click Start button
   const fetchStart = () => {
+    setIsLoading1(true);
+    setIsLoading2(true);
+    setIsLoading3(true);
     fetchNFTTrades();
     fetchAllTokenIds();
     initializeApp();
@@ -228,8 +232,8 @@ export const DisplayComponent = () => {
       array.sort(traitCompare);
       result[keys[i]] = array;
     }
-    console.log(result);
-    console.log(Object.keys(result));
+    console.log("TraitRanking Result=>", result, Object.keys(result));
+    // console.log(Object.keys(result));
     setTraitSortData(result);
     // setIsLoading(false);
   };
@@ -277,24 +281,28 @@ export const DisplayComponent = () => {
       <div className="text-white text-3xl font-semibold ">
         - Floor price of last two least values on Opensea
       </div>
-      {lowestValues && (
-        <div className="lowest_group flex justify-center p-4 wrap">
-          {lowestValues.map((item) => (
-            <div
-              className="lowest_item text-black mx-12 bg-red-300 p-4 rounded"
-              key={item.id}
-            >
-              <p>Token ID: {item.id}</p>
-              <p>Price (ETH): {item.price / 10 ** 18}</p>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="h-40">
+        {isLoading1 && <Loadercomponent />}
+        {lowestValues && (
+          <div className="lowest_group flex justify-center p-4 wrap">
+            {lowestValues.map((item) => (
+              <div
+                className="lowest_item text-black mx-12 bg-red-300 p-4 rounded"
+                key={item.id}
+              >
+                <p>Token ID: {item.id}</p>
+                <p>Price (ETH): {item.price / 10 ** 18}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       {/* Getting floor price of last two least values by trait on open sea */}
       <div className="text-white text-3xl font-semibold ">
         - Floor price of last two least values by trait on Opensea
       </div>
-      <div className="flex justify-center">
+      <div className="flex justify-center h-40">
+        {isLoading2 && <Loadercomponent />}
         {traitTypes && (
           <div className="lowest_group flex justify-center p-4">
             <select
@@ -340,8 +348,6 @@ export const DisplayComponent = () => {
               >
                 <p>Token ID: {item.token_ids[0]}</p>
                 <p>Price (ETH): {item.price / 10 ** 18}</p>
-                {/* <p>Token ID: {item.id}</p>
-              <p>Price (ETH): {item.price / 10 ** 18}</p> */}
               </div>
             ))}
           </div>
@@ -362,50 +368,54 @@ export const DisplayComponent = () => {
       <div className="text-white text-3xl font-semibold ">
         - Getting metadata from the ethereum blockchainby trait ranking
       </div>
-      {traitSortData.length !== 0 ? (
-        <div className="text-white text-xl font-semibold flex px-[10%]">
-          {traitTypes && (
-            <div className="text-black lowest_group flex justify-center p-4">
-              <select
-                className=""
-                value={selectedTraitTypeForSort}
-                onChange={(e) => handleSortedTrait(e.target.value)}
-              >
-                <option value="Select" disabled>
-                  Select...
-                </option>
-                {traitTypes.map((item, i) => (
-                  <option className="" id={item} value={item}>
-                    {item}
+      <div>
+        {isLoading3 && <Loadercomponent />}
+
+        {traitSortData.length !== 0 ? (
+          <div className="text-white text-xl font-semibold flex px-[10%]">
+            {traitTypes && (
+              <div className="text-black lowest_group flex justify-center p-4">
+                <select
+                  className=""
+                  value={selectedTraitTypeForSort}
+                  onChange={(e) => handleSortedTrait(e.target.value)}
+                >
+                  <option value="Select" disabled>
+                    Select...
                   </option>
-                ))}
-              </select>
-            </div>
-          )}
-          {traitRankData !== [] && (
-            <table className="w-screen bg-green-300">
-              <tbody>
-                <tr className="text-black">
-                  <th>Trait</th>
-                  <th>Score</th>
-                  <th>Rank</th>
-                  <th>Price</th>
-                </tr>
-                {traitRankData.map((item, i) => (
-                  <tr className="text-gray-700">
-                    <td>{item.key}</td>
-                    <td>{item.val}</td>
-                    <td>{i + 1}</td>
-                    <td>price</td>
+                  {traitTypes.map((item, i) => (
+                    <option className="" id={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {traitRankData !== [] && (
+              <table className="w-screen bg-green-300">
+                <tbody>
+                  <tr className="text-black">
+                    <th>Trait</th>
+                    <th>Score</th>
+                    <th>Rank</th>
+                    <th>Price</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      ) : (
-        <div>Loading...</div>
-      )}
+                  {traitRankData.map((item, i) => (
+                    <tr className="text-gray-700">
+                      <td>{item.key}</td>
+                      <td>{item.val}</td>
+                      <td>{i + 1}</td>
+                      <td>price</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </div>
     </>
   );
 };
