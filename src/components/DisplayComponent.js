@@ -235,7 +235,7 @@ export const DisplayComponent = () => {
     console.log("TraitRanking Result=>", result, Object.keys(result));
     // console.log(Object.keys(result));
     setTraitSortData(result);
-    // setIsLoading(false);
+    setIsLoading3(false);
   };
 
   const handleSortedTrait = (e) => {
